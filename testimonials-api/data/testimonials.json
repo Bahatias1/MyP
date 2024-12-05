@@ -1,0 +1,15 @@
+[
+    {
+      "message": "Ce produit a changé ma vie! Merci!",
+      "image": "https://via.placeholder.com/150",
+      "name": "John Doe",
+      "role": "Client satisfait"
+    },
+    {
+      "message": "Un service exceptionnel et une équipe fantastique.",
+      "image": "https://via.placeholder.com/150",
+      "name": "Jane Smith",
+      "role": "Client fidèle"
+    }
+  ]
+  
