@@ -1,4 +1,5 @@
 all:
-    # Example build commands
-    npm install
-    npm run build
+	# Install dependencies
+	npm install
+	# Build the project
+	npm run build
