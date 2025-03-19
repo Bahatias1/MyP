@@ -1,41 +1,48 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Récupération et nettoyage des données du formulaire
+    $name = sanitize_input($_POST['name']);
+    $email = sanitize_input($_POST['email']);
+    $subject = sanitize_input($_POST['subject']);
+    $message = sanitize_input($_POST['message']);
 
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'contact@example.com';
+    // Validation de l'email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>alert('Adresse e-mail invalide.');</script>";
+        exit();
+    }
 
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
+    // Adresse e-mail du destinataire
+    $to = "selebungapatrick@gmail.com";
+    
+    // Sujet de l'e-mail
+    $email_subject = "Message de Contact: $subject";
+    
+    // Corps du message
+    $email_body = "Nom: $name\n";
+    $email_body .= "E-mail: $email\n";
+    $email_body .= "Message: \n$message\n";
 
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
+    // En-têtes de l'e-mail
+    $headers = "From: $email\r\n";
+    $headers .= "Reply-To: $email\r\n";
+    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
+    // Envoi de l'e-mail
+    if (mail($to, $email_subject, $email_body, $headers)) {
+        echo "<script>alert('Votre message a été envoyé. Merci !');</script>";
+    } else {
+        // Log de l'erreur dans un fichier de log
+        error_log("Erreur d'envoi d'email: " . date('Y-m-d H:i:s') . "\nNom: $name\nEmail: $email\nSujet: $subject\nMessage: $message\n", 3, 'error_log.txt');
+        echo "<script>alert('Désolé, une erreur s\'est produite.');</script>";
+    }
+}
 
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
-
-  echo $contact->send();
+// Fonction de nettoyage des entrées
+function sanitize_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
 ?>
