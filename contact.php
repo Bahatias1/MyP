@@ -6,6 +6,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $subject = sanitize_input($_POST['subject']);
     $message = sanitize_input($_POST['message']);
 
+    // Validation de l'email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>alert('Adresse e-mail invalide.');</script>";
+        exit();
+    }
+
     // Adresse e-mail du destinataire
     $to = "selebungapatrick@gmail.com";
     
@@ -26,6 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mail($to, $email_subject, $email_body, $headers)) {
         echo "<script>alert('Votre message a été envoyé. Merci !');</script>";
     } else {
+        // Log de l'erreur dans un fichier de log
+        error_log("Erreur d'envoi d'email: " . date('Y-m-d H:i:s') . "\nNom: $name\nEmail: $email\nSujet: $subject\nMessage: $message\n", 3, 'error_log.txt');
         echo "<script>alert('Désolé, une erreur s\'est produite.');</script>";
     }
 }
